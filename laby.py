@@ -24,23 +24,24 @@ class Laby(object) :
         return (n-1) / self.nb_col, (n-1) % self.nb_col
 
     def affiche(self, seq=True) :
+        scale = 6
         for l in range(self.nb_lig+1) :
             for c in range(self.nb_col) :
-                print(u'\u2014'*6 if self.murs_h[l, c] else ' '*6, end="")
+                print(u'\u2014'*scale if self.murs_h[l, c] else ' '*scale, end="")
             print()
             if l >= self.nb_lig :
                 break
             for c in range(self.nb_col) :
                 if seq :
-                    print(('|' if self.murs_v[l, c] else ' ') + ' %3d ' % self.grille[l, c], end="")
+                    print(('|' if self.murs_v[l, c] else ' ') + ' %3s ' % self.grille[l, c], end="")
                 else :
                     print(('|' if self.murs_v[l, c] else ' ') + '    ', end="")
             print('|' if self.murs_v[l, self.nb_col] else '', end="")
             print()
 
-    def grille_change(self, fro, to) :
+    def grille_change(self, fr, to) :
         for key, val in self.grille.iteritems() :
-            if val == fro :
+            if val == fr :
                 self.grille[key] = to
 
     def mur_alea(self) :
@@ -71,10 +72,10 @@ class Laby(object) :
         G = nx.Graph()
         for c1, c2 in self.chemin :
             G.add_edge(c1 ,c2)
-        self.grille = {(r, c): False  for r in range(l.nb_lig) for c in range(l.nb_col)}
+        self.grille = {(r, c): ' '  for r in range(l.nb_lig) for c in range(l.nb_col)}
         solution = nx.shortest_path(G,source=1,target=self.max_seq)
         for seq in solution :
-            self.grille[self.from_seq(seq)] = True
+            self.grille[self.from_seq(seq)] = 'X'
         self.affiche()
 
 l = Laby(30, 35)
