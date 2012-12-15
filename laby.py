@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
+import networkx as nx
 import random
 
 
@@ -25,13 +26,13 @@ class Laby(object) :
     def affiche(self, seq=True) :
         for l in range(self.nb_lig+1) :
             for c in range(self.nb_col) :
-                print(u'\u2014'*5 if self.murs_h[l, c] else ' '*5, end="")
+                print(u'\u2014'*6 if self.murs_h[l, c] else ' '*6, end="")
             print()
             if l >= self.nb_lig :
                 break
             for c in range(self.nb_col) :
                 if seq :
-                    print(('|' if self.murs_v[l, c] else ' ') + ' %2d ' % self.grille[l, c], end="")
+                    print(('|' if self.murs_v[l, c] else ' ') + ' %3d ' % self.grille[l, c], end="")
                 else :
                     print(('|' if self.murs_v[l, c] else ' ') + '    ', end="")
             print('|' if self.murs_v[l, self.nb_col] else '', end="")
@@ -51,7 +52,7 @@ class Laby(object) :
             c1 = self.grille[l, c-1]
             c2 = self.grille[l, c]
             if c1 != c2 :
-                self.chemin.append((self.to_seq(l, c), self.to_seq(l, c-1)))
+                self.chemin.append((self.to_seq(l, c-1), self.to_seq(l, c)))
                 self.murs_v[(l, c)] = 0
                 self.grille_change(c1, c2)
                 self.del_murs += 1
@@ -59,20 +60,22 @@ class Laby(object) :
             c1 = self.grille[l-1, c]
             c2 = self.grille[l, c]
             if c1 != c2 :
-                self.chemin.append((self.to_seq(l, c), self.to_seq(l-1, c)))
+                self.chemin.append((self.to_seq(l-1, c), self.to_seq(l, c)))
                 self.murs_h[(l, c)] = 0
                 self.grille_change(c1, c2)
                 self.del_murs += 1
 
     def make(self) :
         while self.del_murs <  self.nb_col * self.nb_lig - 1:
-            l.mur_alea()
-        l.grille = {(r, c): self.to_seq(r, c) for r in range(l.nb_lig) for c in range(l.nb_col)}
-        l.affiche()
-        print(l.chemin)
-        for c1, c2 in l.chemin :
-            if c1 == 1 or c2 == 1 :
-                print(c1, c2)
+            self.mur_alea()
+        G = nx.Graph()
+        for c1, c2 in self.chemin :
+            G.add_edge(c1 ,c2)
+        self.grille = {(r, c): False  for r in range(l.nb_lig) for c in range(l.nb_col)}
+        solution = nx.shortest_path(G,source=1,target=self.max_seq)
+        for seq in solution :
+            self.grille[self.from_seq(seq)] = True
+        self.affiche()
 
-l = Laby(3, 4)
+l = Laby(30, 35)
 l.make()
