@@ -6,10 +6,18 @@ from pygame.locals import *
 
 import laby
 
-LARGEUR = 30
-HAUTEUR = 20
+LARGEUR = 60
+HAUTEUR = 30
 TITRE = "Laby"
-SIZE = 50
+SIZE = 30
+
+def init(s) :
+    lab = laby.Laby(HAUTEUR, LARGEUR)
+    lab.make()
+    s.fill(white)
+    draw_grille(s, lab)
+    pygame.display.update()
+    return lab
 
 def draw_grille(s, lab):
     for l in range(1, lab.nb_lig):
@@ -31,7 +39,13 @@ def draw_solution(s, lab):
 def draw_point(s, col) :
     x = pygame.mouse.get_pos()[0]/SIZE
     y = pygame.mouse.get_pos()[1]/SIZE
-    pygame.draw.circle(screen, col, (x*SIZE + SIZE/2, y*SIZE + SIZE/2), SIZE/4, 0)
+    pygame.draw.circle(s, col, (x*SIZE + SIZE/2, y*SIZE + SIZE/2), SIZE/4, 0)
+    pygame.display.update()
+
+def clear(s):
+    for y in range(lab.nb_lig):
+        for x in range(lab.nb_col):
+            pygame.draw.circle(s, white, (x*SIZE + SIZE/2, y*SIZE + SIZE/2), SIZE/4, 0)
     pygame.display.update()
 
 def loop():
@@ -49,19 +63,19 @@ def loop():
             draw_point(screen, green)
         elif pygame.mouse.get_pressed() == (0, 0, 1):
             draw_point(screen, white)
+        elif event.type == KEYDOWN and event.key == K_SPACE:
+            init(screen)
+        elif pygame.mouse.get_pressed() == (0, 1, 1):
+            clear(screen)
+
 
 if __name__ == '__main__':
-    lab = laby.Laby(HAUTEUR, LARGEUR)
-    lab.make()
-
     pygame.init()
     screen = pygame.display.set_mode((LARGEUR * SIZE, HAUTEUR * SIZE))
     pygame.display.set_caption(TITRE)
-
     white = pygame.Color(255, 255, 255)
     black = pygame.Color(0, 0, 0)
     red = pygame.Color(255, 0, 0)
     green = pygame.Color(0, 255, 0)
-    screen.fill(white)
-    draw_grille(screen, lab)
+    lab = init(screen)
     loop()
