@@ -6,32 +6,49 @@ from pygame.locals import *
 
 import laby
 
-LARGEUR = 10
-HAUTEUR = 8
+LARGEUR = 30
+HAUTEUR = 20
 TITRE = "Laby"
 SIZE = 50
 
-def draw_grille(s, lab) :
+def draw_grille(s, lab):
     for l in range(1, lab.nb_lig):
         for c in range(lab.nb_col):
-            if lab.murs_h[(l, c)] :
+            if lab.murs_h[(l, c)]:
                 pygame.draw.line(s, black, (c*SIZE, l*SIZE), ((c+1)*SIZE, l*SIZE), 1)
     for l in range(lab.nb_lig):
         for c in range(1, lab.nb_col):
-            if lab.murs_v[(l, c)] :
+            if lab.murs_v[(l, c)]:
                 pygame.draw.line(s, black, (c*SIZE, l*SIZE), (c*SIZE, (l+1)*SIZE), 1)
+    pygame.display.update()
+
+def draw_solution(s, lab):
+    coord_sol = [lab.from_seq(n) for n in lab.solution()]
+    for y, x in coord_sol :
+        pygame.draw.circle(s, red, (x*SIZE + SIZE/2, y*SIZE + SIZE/2), SIZE/4, 0)
+    pygame.display.update()
+
+def draw_point(s, col) :
+    x = pygame.mouse.get_pos()[0]/SIZE
+    y = pygame.mouse.get_pos()[1]/SIZE
+    pygame.draw.circle(screen, col, (x*SIZE + SIZE/2, y*SIZE + SIZE/2), SIZE/4, 0)
+    pygame.display.update()
 
 def loop():
     clock = pygame.time.Clock()
     fps = 100
     active = True
     while active :
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                active = False
-        pygame.display.update()
-        clock.tick(fps)
+        event = pygame.event.wait()
+        if event.type == QUIT:
+            pygame.quit()
+            active = False
+        elif pygame.mouse.get_pressed() == (0, 1, 0):
+            draw_solution(screen, lab)
+        elif pygame.mouse.get_pressed() == (1, 0, 0):
+            draw_point(screen, green)
+        elif pygame.mouse.get_pressed() == (0, 0, 1):
+            draw_point(screen, white)
 
 if __name__ == '__main__':
     lab = laby.Laby(HAUTEUR, LARGEUR)
@@ -43,6 +60,8 @@ if __name__ == '__main__':
 
     white = pygame.Color(255, 255, 255)
     black = pygame.Color(0, 0, 0)
+    red = pygame.Color(255, 0, 0)
+    green = pygame.Color(0, 255, 0)
     screen.fill(white)
     draw_grille(screen, lab)
     loop()
