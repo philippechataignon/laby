@@ -5,7 +5,6 @@ from __future__ import print_function
 import networkx as nx
 import random
 
-
 class Laby(object) :
     def __init__(self, nb_lig, nb_col) :
         self.nb_lig = nb_lig
@@ -18,12 +17,12 @@ class Laby(object) :
         self.chemin = []
 
     def to_seq(self, r, c) :
-        return c + self.nb_col * r + 1 
+        return c + self.nb_col * r + 1
 
     def from_seq(self, n) :
         return (n-1) / self.nb_col, (n-1) % self.nb_col
 
-    def affiche(self, seq=True) :
+    def affiche(self, grille=True) :
         bh = u'\u2014'
         scale = 6
         for l in range(self.nb_lig) :
@@ -33,7 +32,10 @@ class Laby(object) :
                 mursh = [bh*scale if self.murs_h[l, c] else ' ' * scale for c in range(self.nb_col)]
                 mursh.append(bh)
                 s_mursh = "".join(mursh)
-            mursv = [('|' if c==0 or self.murs_v[l, c] else ' ') + ' %3s ' % self.grille[l, c] for c in range(self.nb_col)]
+            if grille :
+                mursv = [('|' if c==0 or self.murs_v[l, c] else ' ') + ' %3s ' % self.grille[l, c] for c in range(self.nb_col)]
+            else :
+                mursv = [('|' if c==0 or self.murs_v[l, c] else ' ') + ' ' * (scale-1) for c in range(self.nb_col)]
             mursv.append('|')
             print(s_mursh)
             print("".join(mursv))
@@ -73,6 +75,8 @@ class Laby(object) :
     def make(self) :
         while self.del_murs <  self.nb_col * self.nb_lig - 1:
             self.mur_alea()
+
+    def solve(self) :
         G = nx.Graph()
         for c1, c2 in self.chemin :
             G.add_edge(c1 ,c2)
@@ -80,7 +84,10 @@ class Laby(object) :
         solution = nx.shortest_path(G,source=1,target=self.max_seq)
         for seq in solution :
             self.grille[self.from_seq(seq)] = 'X'
-        self.affiche()
 
 l = Laby(30, 35)
 l.make()
+l.affiche(False)
+raw_input()
+l.solve()
+l.affiche()
