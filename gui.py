@@ -64,7 +64,7 @@ def loop():
         elif pygame.mouse.get_pressed() == (0, 0, 1):
             draw_point(screen, white)
         elif event.type == KEYDOWN and event.key == K_SPACE:
-            init(screen)
+            lab = init(screen)
         elif pygame.mouse.get_pressed() == (0, 1, 1):
             clear(screen)
 
