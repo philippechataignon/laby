@@ -85,9 +85,10 @@ class Laby(object) :
         for seq in solution :
             self.grille[self.from_seq(seq)] = 'X'
 
-l = Laby(30, 35)
-l.make()
-l.affiche(False)
-raw_input()
-l.solve()
-l.affiche()
+if __name__ == '__main__' :
+    l = Laby(30, 35)
+    l.make()
+    l.affiche(False)
+    raw_input()
+    l.solve()
+    l.affiche()
