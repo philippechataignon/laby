@@ -48,9 +48,9 @@ def clear(s):
             pygame.draw.circle(s, white, (x*SIZE + SIZE/2, y*SIZE + SIZE/2), SIZE/4, 0)
     pygame.display.update()
 
-def loop():
+def loop(screen, lab):
     clock = pygame.time.Clock()
-    fps = 100
+    fps = 50
     active = True
     while active :
         event = pygame.event.wait()
@@ -68,7 +68,6 @@ def loop():
         elif pygame.mouse.get_pressed() == (0, 1, 1):
             clear(screen)
 
-
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((LARGEUR * SIZE, HAUTEUR * SIZE))
@@ -78,4 +77,4 @@ if __name__ == '__main__':
     red = pygame.Color(255, 0, 0)
     green = pygame.Color(0, 255, 0)
     lab = init(screen)
-    loop()
+    loop(screen, lab)
